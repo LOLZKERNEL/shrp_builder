@@ -4,8 +4,8 @@
 
 MANIFEST="git://github.com/SHRP/manifest.git -b v3_11.0"
 
-DT_PATH=device/xiaomi/camellia
-DT_LINK="https://github.com/willzyx-hub/shrp_device_xiaomi_camellia -b android-11.0"
+DT_PATH=device/xiaomi/olive
+DT_LINK="https://github.com/Jprimero15/device_xiaomi_olive-shrp -b SHRP"
 
 echo " ===+++ Setting up Build Environment +++==="
 apt install openssh-server -y
@@ -23,7 +23,8 @@ echo " ===+++ Building Recovery +++==="
 
 . build/envsetup.sh
 export ALLOW_MISSING_DEPENDENCIES=true
-lunch twrp_${DEVICE}-eng && mka bootimage
+export LC_ALL="C"
+lunch twrp_${DEVICE}-eng && mka recoveryimage
 
 cd $OUT/recovery/root
 ./ldcheck -p system/lib64:vendor/lib64 -d system/bin/qseecomd
@@ -34,7 +35,7 @@ echo " ===+++ Uploading Recovery +++==="
 version=$(cat bootable/recovery/variables.h | grep "define TW_MAIN_VERSION_STR" | cut -d \" -f2)
 OUTFILE=TWRP-${version}-${DEVICE}-$(date "+%Y%m%d-%I%M").zip
 cd out/target/product/$DEVICE
-mv boot.img ${OUTFILE%.zip}.img
+mv recovery.img ${OUTFILE%.zip}.img
 zip -r9 $OUTFILE ${OUTFILE%.zip}.img
 
 #curl -T $OUTFILE https://oshi.at
